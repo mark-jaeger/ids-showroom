@@ -1,0 +1,11 @@
+artikelnummer,produktname,variant_name,manufacturer,manufacturer_number,product_group,produktbeschreibung,image_url,cat1,cat2,cat3,cat4
+TEST-001,Dentalspiegel #5,Standard,Brand X,BX-12345,Instrumente,"<p>Hochwertiger Dentalspiegel für die tägliche Praxis.</p><ul><li>Rostfreier Stahl</li><li>Ergonomischer Griff</li></ul>",https://placehold.co/400x300,Instrumente,Spiegel,nan,nan
+TEST-002,Komposit-Kit,Premium Set,Brand Y,BY-67890,Restaurative,<p>Komplettes Komposit-Set für alle Restaurationen.</p>,https://placehold.co/400x300,Restaurative,Komposite,Füllungen,nan
+TEST-003,Implantat-System,4.0mm x 10mm,Brand Z,BZ-IMPL-410,Implantologie,"<p>Hochwertiges Implantatsystem mit hervorragender Osseointegration.</p><ul><li>Titan Grad 4</li><li>Selbstschneidend</li><li>Kegelförmiges Design</li></ul>",https://placehold.co/400x300,Implantologie,Implantate,Systeme,Schraube
+TEST-004,Prophylaxe-Paste,Minze-Geschmack,Brand X,BX-PROPH-01,Prophylaxe,<p>Fluoridhaltige Prophylaxe-Paste mit angenehmem Minzgeschmack.</p>,nan,Prophylaxe,Pasten,nan,nan
+TEST-005,Absaugkanüle,Steril 50 Stk,Brand Y,nan,Verbrauchsmaterial,<p>Sterile Einweg-Absaugkanülen im 50er Pack.</p>,https://placehold.co/400x300,Verbrauchsmaterial,Absaugung,Kanülen,nan
+TEST-006,Bohrer-Set,Diamant beschichtet,Brand Z,BZ-DRILL-100,Instrumente,"<p>Professionelles Diamantbohrer-Set für präzise Präparationen.</p><ul><li>ISO-Farbcodierung</li><li>Sterilisierbar</li></ul>",https://placehold.co/400x300,Instrumente,Bohrer,Diamantbohrer,nan
+TEST-007,Composite Bonding Agent,Universal,Brand X,BX-BOND-05,Restaurative,<p>Universeller Haftvermittler für alle Composite-Arbeiten.</p>,https://placehold.co/400x300,Restaurative,Bonding,nan,nan
+TEST-008,Röntgenfilm,Größe 2,Brand Y,BY-XRAY-02,Radiologie,<p>Hochauflösende Röntgenfilme für diagnostische Aufnahmen.</p>,nan,Radiologie,Filme,Intraoral,nan
+TEST-009,Zahnseide gewachst,200m Rolle,Brand X,BX-FLOSS-W,Prophylaxe,<p>Gewachste Zahnseide für sanfte Zahnzwischenraumreinigung.</p>,https://placehold.co/400x300,Prophylaxe,Zahnseide,nan,nan
+TEST-010,Wurzelkanalfeilen,Ni-Ti rotierend,Brand Z,BZ-ENDO-25,Endodontie,"<p>Rotierende Nickel-Titan Feilen für effiziente Wurzelkanalaufbereitung.</p><ul><li>Hohe Flexibilität</li><li>Bruchresistent</li></ul>",https://placehold.co/400x300,Endodontie,Feilen,Rotierend,nan
