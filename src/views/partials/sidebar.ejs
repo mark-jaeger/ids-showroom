@@ -1,0 +1,40 @@
+<aside class="sidebar">
+    <!-- Sidebar will be populated in Phase 4 with manufacturers and categories -->
+    <% if (manufacturers && manufacturers.length > 0) { %>
+        <section class="sidebar-section">
+            <h2>Hersteller</h2>
+            <ul class="manufacturer-list">
+                <% manufacturers.forEach(m => { %>
+                    <li>
+                        <a
+                            href="/products?manufacturer=<%= encodeURIComponent(m.manufacturer) %>"
+                            class="<%= filters.manufacturer === m.manufacturer ? 'active' : '' %>"
+                        >
+                            <%= m.manufacturer %>
+                            <span class="count">(<%= m.product_count %>)</span>
+                        </a>
+                    </li>
+                <% }); %>
+            </ul>
+        </section>
+    <% } %>
+
+    <% if (categories && categories.length > 0) { %>
+        <section class="sidebar-section">
+            <h2>Kategorien</h2>
+            <ul class="category-list">
+                <% categories.forEach(c => { %>
+                    <li>
+                        <a
+                            href="/products?manufacturer=<%= encodeURIComponent(filters.manufacturer) %>&category=<%= encodeURIComponent(c.category) %>"
+                            class="<%= filters.category === c.category ? 'active' : '' %>"
+                        >
+                            <%= c.category %>
+                            <span class="count">(<%= c.product_count %>)</span>
+                        </a>
+                    </li>
+                <% }); %>
+            </ul>
+        </section>
+    <% } %>
+</aside>

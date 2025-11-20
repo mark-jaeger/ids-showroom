@@ -1,0 +1,20 @@
+<article class="product-card">
+    <a href="/product/<%= product.sku %>">
+        <div class="product-card-image">
+            <% if (product.image_url) { %>
+                <img src="<%= product.image_url %>" alt="<%= product.name %>" loading="lazy" onerror="this.src='/images/placeholder.svg'">
+            <% } else { %>
+                <img src="/images/placeholder.svg" alt="Kein Bild" loading="lazy">
+            <% } %>
+        </div>
+
+        <div class="product-card-content">
+            <p class="product-card-manufacturer"><%= product.manufacturer %></p>
+            <h3 class="product-card-title"><%= product.name %></h3>
+            <% if (product.variant_name && product.variant_name !== 'nan') { %>
+                <p class="product-card-variant"><%= product.variant_name %></p>
+            <% } %>
+            <p class="product-card-sku">SKU: <%= product.sku %></p>
+        </div>
+    </a>
+</article>

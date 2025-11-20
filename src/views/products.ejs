@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Dental Katalog</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include('partials/header', { filters }) %>
+
+    <div class="container">
+        <div class="layout">
+            <%- include('partials/sidebar', { manufacturers, categories, filters }) %>
+
+            <main class="content">
+                <h1><%= title %></h1>
+
+                <div class="toolbar">
+                    <p class="result-count"><%= pagination.totalCount.toLocaleString('de-DE') %> Produkte</p>
+                </div>
+
+                <div class="product-grid">
+                    <% if (products.length === 0) { %>
+                        <p class="no-results">Keine Produkte gefunden.</p>
+                    <% } else { %>
+                        <% products.forEach(product => { %>
+                            <%- include('partials/product-card', { product }) %>
+                        <% }); %>
+                    <% } %>
+                </div>
+
+                <% if (pagination.totalPages > 1) { %>
+                    <%- include('partials/pagination', { currentPage: pagination.currentPage, totalPages: pagination.totalPages, filters }) %>
+                <% } %>
+            </main>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -84,7 +84,11 @@
 ### Completing Work
 1. Run end-to-end verification
 2. Update issue doc with resolution summary (ensure status is marked as ✅ RESOLVED)
-3. **Move resolved issues to `docs/issues/resolved/`** - Active issues stay in `docs/issues/`, completed ones go to `docs/issues/resolved/`
+3. **ALWAYS move resolved issues to `docs/issues/resolved/`** - This is MANDATORY:
+   - Active/in-progress issues stay in `docs/issues/`
+   - Completed issues MUST be moved to `docs/issues/resolved/`
+   - Use `mv docs/issues/ISSUE-XXX-*.md docs/issues/resolved/`
+   - This keeps the active issues directory clean and focused
 4. Extract learnings to `docs/lessons-learned.md`
 5. Update `current-session.md` with final state
 

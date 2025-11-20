@@ -289,13 +289,27 @@ psql -d dental_catalog -c "\d products"
 - **Resolution Date**: 2024-11-20
 - **Outcome**: Database fully functional with German full-text search
 - **Files**: `scripts/schema.sql`, `src/config/database.js`
-- **Moved to**: Ready for `docs/issues/resolved/` (after session)
+- **Moved to**: `docs/issues/resolved/`
 
 ### ✅ ISSUE-002: CSV Import Script
 - **Resolution Date**: 2024-11-20
-- **Outcome**: Import script working, 10 products loaded successfully
-- **Files**: `scripts/import-csv.js`, `data/sample.csv`
-- **Moved to**: Ready for `docs/issues/resolved/` (after session)
+- **Outcome**: Import script working, 29,342 products loaded successfully
+- **Files**: `scripts/import-csv.js`, `data/2025_06_04_scraping_products.csv`
+- **Moved to**: `docs/issues/resolved/`
+
+### ✅ ISSUE-003: Express App + Basic Product Listing
+- **Resolution Date**: 2024-11-20
+- **Outcome**: Web application running with product listing and pagination
+- **Files**: `src/app.js`, `src/models/product.js`, `src/routes/products.js`, EJS templates, CSS
+- **Features**:
+  - Express server with EJS templating
+  - Product listing page with real 29,352 products
+  - Pagination (48 products per page, 612 pages total)
+  - Responsive product grid
+  - Basic CSS styling
+  - Placeholder images
+- **Testing**: Server running at http://localhost:3000, pagination verified
+- **Moved to**: `docs/issues/resolved/`
 
 ---
 
@@ -347,18 +361,21 @@ None currently. Ready to proceed with ISSUE-003.
 - ✅ All issue files created (6 total)
 - ✅ Database schema deployed
 - ✅ CSV import working
-- ✅ 10 products in database
+- ✅ 29,352 products in database
 - ✅ Full-text search verified
+- ✅ Express app implemented
+- ✅ Product listing page working with real data
+- ✅ Pagination functional (612 pages)
 
 **Ready For:**
-- Express application implementation (ISSUE-003)
-- Product listing page with real data
 - Search and filtering (ISSUE-004)
+- Product detail pages (ISSUE-005)
+- CSS polish (ISSUE-006)
 
 **Blockers:**
 - None
 
 ---
 
-**Last Updated**: 2024-11-20 (Full catalog imported: 29,352 products)
-**Next Session**: Start ISSUE-003 (Express App + Basic Listing) with real product data
+**Last Updated**: 2024-11-20 (Express app working with 29,352 products)
+**Next Session**: Start ISSUE-004 (Search and Filtering)
