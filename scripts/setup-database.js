@@ -14,6 +14,7 @@ async function setupDatabase() {
                 category VARCHAR(255),
                 variant_name VARCHAR(255),
                 manufacturer_number VARCHAR(100),
+                product_group VARCHAR(255),
                 description TEXT,
                 image_url TEXT,
                 active BOOLEAN DEFAULT true,
@@ -22,6 +23,19 @@ async function setupDatabase() {
             );
         `);
         console.log('✓ Products table created');
+
+        // Create import_history table
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS import_history (
+                id SERIAL PRIMARY KEY,
+                filename TEXT NOT NULL,
+                rows_imported INTEGER NOT NULL,
+                rows_failed INTEGER NOT NULL,
+                errors JSONB,
+                imported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+        console.log('✓ Import history table created');
 
         // Create indexes
         await db.query(`
