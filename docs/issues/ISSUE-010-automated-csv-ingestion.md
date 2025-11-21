@@ -1,7 +1,8 @@
 # ISSUE-010: Automated CSV Ingestion System
 
-**Status**: Pending
+**Status**: ✅ RESOLVED
 **Date**: 2024-11-21
+**Resolved**: 2025-11-21
 **Type**: Enhancement - Data Import
 **Component**: Backend, Scripts
 **Assignee**: Claude Code
@@ -589,6 +590,87 @@ npm run import-history
 3. **Move large CSV** - `git rm data/2025_06_04_scraping_products.csv`
 4. **Add to .gitignore** - Prevent future large files
 5. **Update docs** - New import workflow
+
+---
+
+## Resolution Summary
+
+**Implementation**: Manual Ingestion (Option A)
+**Date**: 2025-11-21
+
+### Changes Made
+
+1. **Created directory structure**:
+   - `data/inbox/` - Drop new CSV files here
+   - `data/done/` - Successfully processed files (with timestamps)
+   - `data/failed/` - Failed imports for review
+   - Each directory has `.gitkeep` file
+
+2. **Updated .gitignore**:
+   - Exclude `data/inbox/`, `data/done/`, `data/failed/`
+   - Exclude all `data/*.csv` except `data/sample.csv`
+   - Prevents large CSV files from bloating git repository
+
+3. **Created ingest-csv.js script**:
+   - Scans `data/inbox/` for CSV files
+   - Processes each file using existing `import-csv.js`
+   - Moves successful imports to `data/done/` with timestamp
+   - Moves failed imports to `data/failed/` with error log
+   - Creates `.log` files for audit trail
+
+4. **Updated package.json**:
+   - Added `npm run import <file>` for direct CSV import
+   - Added `npm run ingest` for processing inbox folder
+
+### Usage
+
+**Manual Ingestion**:
+```bash
+# 1. Drop CSV files into inbox
+cp new-products.csv data/inbox/
+
+# 2. Run ingestion
+npm run ingest
+
+# 3. Check results
+ls data/done/    # Successfully processed
+ls data/failed/  # Failed imports
+```
+
+**Test Results**:
+- File: test-sample.csv (10 products)
+- Processing time: 2.26s
+- Result: Success
+- File moved to: `data/done/2025-11-21T16-37-57-098_test-sample.csv`
+- Log created: `data/done/2025-11-21T16-37-57-098_test-sample.csv.log`
+
+### Benefits Achieved
+
+1. ✅ **Automated workflow** - Drop file in inbox, run single command
+2. ✅ **Audit trail** - Timestamped files and logs track all imports
+3. ✅ **Git repository health** - Large CSV files excluded from version control
+4. ✅ **Error isolation** - Failed imports separated for debugging
+5. ✅ **Retry capability** - Failed files can be fixed and re-imported
+6. ✅ **Backwards compatible** - Old `npm run import-data` still works
+
+### Files Created
+
+- `scripts/ingest-csv.js` - Ingestion orchestration script
+- `data/inbox/.gitkeep` - Maintain folder structure
+- `data/done/.gitkeep` - Maintain folder structure
+- `data/failed/.gitkeep` - Maintain folder structure
+
+### Files Modified
+
+- `.gitignore` - Exclude CSV data folders and files
+- `package.json` - Added `import` and `ingest` scripts
+
+### Future Enhancements (Not Implemented)
+
+- **Watch mode** - Automatic processing when files appear (requires `chokidar`)
+- **Scheduled ingestion** - Cron job for nightly imports
+- **API endpoint** - Web upload interface
+- **Import history viewer** - Script to display import logs
 
 ---
 

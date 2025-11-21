@@ -29,3 +29,10 @@ build/
 # Temporary files
 tmp/
 temp/
+
+# CSV data files (keep sample.csv only)
+data/inbox/
+data/done/
+data/failed/
+data/*.csv
+!data/sample.csv
