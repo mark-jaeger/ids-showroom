@@ -13,13 +13,11 @@ const pool = new Pool({
     keepAliveInitialDelayMillis: 10000
 });
 
-// Test connection on startup
+// Test connection on startup (non-blocking)
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
         console.error('❌ Database connection failed:', err.message);
-        if (process.env.NODE_ENV === 'production') {
-            process.exit(1);
-        }
+        console.error('   Will retry on next query...');
     } else {
         console.log('✓ Database connection established');
     }
@@ -27,9 +25,7 @@ pool.query('SELECT NOW()', (err, res) => {
 
 pool.on('error', (err) => {
     console.error('Unexpected database error:', err);
-    if (process.env.NODE_ENV === 'production') {
-        process.exit(-1);
-    }
+    console.error('Connection pool will attempt to recover...');
 });
 
 module.exports = pool;
