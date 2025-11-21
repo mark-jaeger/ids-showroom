@@ -62,9 +62,10 @@ jobs:
       - name: Deploy to Production
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
         run: |
           echo "🚀 Deploying to production..."
-          railway up --detach
+          railway up --service $RAILWAY_SERVICE --detach
 
       - name: Wait for deployment
         run: sleep 30
