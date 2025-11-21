@@ -44,12 +44,61 @@ function cleanValue(value) {
 }
 
 /**
- * Import products from CSV
+ * Insert a batch of products using multi-row INSERT
+ * @param {Object} client - PostgreSQL client from pool
+ * @param {Array} products - Array of product objects to insert
+ */
+async function insertBatch(client, products) {
+    if (products.length === 0) return;
+
+    const columns = ['sku', 'name', 'variant_name', 'manufacturer', 'manufacturer_number',
+                     'product_group', 'description', 'image_url', 'category'];
+
+    const values = [];
+    const placeholders = [];
+
+    products.forEach((product, idx) => {
+        const offset = idx * columns.length;
+        const productPlaceholders = columns.map((_, i) => `$${offset + i + 1}`);
+        placeholders.push(`(${productPlaceholders.join(', ')})`);
+
+        // Add all product values in order
+        values.push(
+            product.sku,
+            product.name,
+            product.variantName,
+            product.manufacturer,
+            product.manufacturerNumber,
+            product.productGroup,
+            product.description,
+            product.imageUrl,
+            product.category
+        );
+    });
+
+    await client.query(`
+        INSERT INTO products (${columns.join(', ')})
+        VALUES ${placeholders.join(', ')}
+        ON CONFLICT (sku) DO UPDATE SET
+            name = EXCLUDED.name,
+            variant_name = EXCLUDED.variant_name,
+            manufacturer = EXCLUDED.manufacturer,
+            manufacturer_number = EXCLUDED.manufacturer_number,
+            product_group = EXCLUDED.product_group,
+            description = EXCLUDED.description,
+            image_url = EXCLUDED.image_url,
+            category = EXCLUDED.category,
+            updated_at = NOW()
+    `, values);
+}
+
+/**
+ * Import products from CSV with batch processing
  * Deduplicates on SKU (upsert)
  */
 async function importCSV(filepath) {
     console.log(`\n============================================================`);
-    console.log(`Starting CSV Import`);
+    console.log(`Starting CSV Import (Batch Mode)`);
     console.log(`============================================================`);
     console.log(`File: ${filepath}`);
 
@@ -66,7 +115,11 @@ async function importCSV(filepath) {
         bom: true  // Handle Excel UTF-8 BOM
     });
 
-    console.log(`Found ${records.length} rows in CSV\n`);
+    console.log(`Found ${records.length} rows in CSV`);
+
+    // Configurable batch size (default: 100, can be overridden via env var)
+    const BATCH_SIZE = parseInt(process.env.CSV_BATCH_SIZE || '100');
+    console.log(`Batch size: ${BATCH_SIZE} products per batch\n`);
 
     const results = {
         success: 0,
@@ -76,6 +129,9 @@ async function importCSV(filepath) {
 
     // Track seen SKUs to dedupe within CSV
     const seenSkus = new Set();
+
+    // Collect valid products for batch processing
+    const products = [];
 
     for (let i = 0; i < records.length; i++) {
         const row = records[i];
@@ -91,48 +147,24 @@ async function importCSV(filepath) {
 
             // Skip duplicates within CSV (keep last occurrence)
             if (seenSkus.has(sku)) {
-                console.log(`  ⚠ Duplicate SKU in CSV, skipping: ${sku}`);
                 continue;
             }
             seenSkus.add(sku);
 
             // Extract and clean data
-            const variantName = cleanValue(row.variant_name);
-            const manufacturer = row.manufacturer ? row.manufacturer.trim() : 'Unknown';
-            const manufacturerNumber = cleanValue(row.manufacturer_number);
-            const productGroup = cleanValue(row.product_group);
-            const description = sanitizeDescription(row.produktbeschreibung);
-            const imageUrl = cleanValue(row.image_url);
-            const category = getLeafCategory(row);
+            const product = {
+                sku,
+                name,
+                variantName: cleanValue(row.variant_name),
+                manufacturer: row.manufacturer ? row.manufacturer.trim() : 'Unknown',
+                manufacturerNumber: cleanValue(row.manufacturer_number),
+                productGroup: cleanValue(row.product_group),
+                description: sanitizeDescription(row.produktbeschreibung),
+                imageUrl: cleanValue(row.image_url),
+                category: getLeafCategory(row)
+            };
 
-            // Upsert product (insert or update if SKU exists)
-            await db.query(`
-                INSERT INTO products (
-                    sku, name, variant_name, manufacturer, manufacturer_number,
-                    product_group, description, image_url, category
-                )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-                ON CONFLICT (sku)
-                DO UPDATE SET
-                    name = EXCLUDED.name,
-                    variant_name = EXCLUDED.variant_name,
-                    manufacturer = EXCLUDED.manufacturer,
-                    manufacturer_number = EXCLUDED.manufacturer_number,
-                    product_group = EXCLUDED.product_group,
-                    description = EXCLUDED.description,
-                    image_url = EXCLUDED.image_url,
-                    category = EXCLUDED.category,
-                    updated_at = NOW()
-            `, [
-                sku, name, variantName, manufacturer, manufacturerNumber,
-                productGroup, description, imageUrl, category
-            ]);
-
-            results.success++;
-
-            if (results.success % 100 === 0) {
-                console.log(`  Processed ${results.success} products...`);
-            }
+            products.push(product);
         } catch (error) {
             results.failed++;
             results.errors.push({
@@ -141,6 +173,52 @@ async function importCSV(filepath) {
                 error: error.message
             });
         }
+    }
+
+    console.log(`Valid products: ${products.length}`);
+    console.log(`Skipped/Invalid: ${results.failed}\n`);
+
+    // Process in batches with transactions
+    const client = await db.connect();
+
+    try {
+        const totalBatches = Math.ceil(products.length / BATCH_SIZE);
+        console.log(`Processing ${totalBatches} batches...\n`);
+
+        for (let i = 0; i < products.length; i += BATCH_SIZE) {
+            const batch = products.slice(i, i + BATCH_SIZE);
+            const batchNum = Math.floor(i / BATCH_SIZE) + 1;
+
+            try {
+                // Begin transaction for this batch
+                await client.query('BEGIN');
+
+                // Insert batch
+                await insertBatch(client, batch);
+
+                // Commit transaction
+                await client.query('COMMIT');
+
+                results.success += batch.length;
+
+                console.log(`  ✓ Batch ${batchNum}/${totalBatches}: ${batch.length} products (Total: ${results.success}/${products.length})`);
+            } catch (error) {
+                // Rollback on error
+                await client.query('ROLLBACK');
+
+                console.error(`  ✗ Batch ${batchNum} failed: ${error.message}`);
+
+                // Record batch failure
+                results.failed += batch.length;
+                results.errors.push({
+                    batch: batchNum,
+                    size: batch.length,
+                    error: error.message
+                });
+            }
+        }
+    } finally {
+        client.release();
     }
 
     // Log import history
