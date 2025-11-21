@@ -1,40 +1,47 @@
 <aside class="sidebar">
-    <!-- Sidebar will be populated in Phase 4 with manufacturers and categories -->
-    <% if (manufacturers && manufacturers.length > 0) { %>
+    <% if (filters.manufacturer) { %>
+        <!-- When manufacturer is selected, show only categories -->
         <section class="sidebar-section">
-            <h2>Hersteller</h2>
-            <ul class="manufacturer-list">
-                <% manufacturers.forEach(m => { %>
-                    <li>
-                        <a
-                            href="/products?manufacturer=<%= encodeURIComponent(m.manufacturer) %>"
-                            class="<%= filters.manufacturer === m.manufacturer ? 'active' : '' %>"
-                        >
-                            <%= m.manufacturer %>
-                            <span class="count">(<%= m.product_count %>)</span>
-                        </a>
-                    </li>
-                <% }); %>
-            </ul>
+            <h2><%= filters.manufacturer %></h2>
+            <a href="/products" class="back-link">← Alle Hersteller</a>
         </section>
-    <% } %>
 
-    <% if (categories && categories.length > 0) { %>
-        <section class="sidebar-section">
-            <h2>Kategorien</h2>
-            <ul class="category-list">
-                <% categories.forEach(c => { %>
-                    <li>
-                        <a
-                            href="/products?manufacturer=<%= encodeURIComponent(filters.manufacturer) %>&category=<%= encodeURIComponent(c.category) %>"
-                            class="<%= filters.category === c.category ? 'active' : '' %>"
-                        >
-                            <%= c.category %>
-                            <span class="count">(<%= c.product_count %>)</span>
-                        </a>
-                    </li>
-                <% }); %>
-            </ul>
-        </section>
+        <% if (categories && categories.length > 0) { %>
+            <section class="sidebar-section">
+                <h2>Kategorien</h2>
+                <ul class="category-list">
+                    <% categories.forEach(c => { %>
+                        <li>
+                            <a
+                                href="/products?manufacturer=<%= encodeURIComponent(filters.manufacturer) %>&category=<%= encodeURIComponent(c.category) %>"
+                                class="<%= filters.category === c.category ? 'active' : '' %>"
+                            >
+                                <%= c.category %>
+                                <span class="count">(<%= c.product_count %>)</span>
+                            </a>
+                        </li>
+                    <% }); %>
+                </ul>
+            </section>
+        <% } %>
+    <% } else { %>
+        <!-- No manufacturer selected, show manufacturer list -->
+        <% if (manufacturers && manufacturers.length > 0) { %>
+            <section class="sidebar-section">
+                <h2>Hersteller</h2>
+                <ul class="manufacturer-list">
+                    <% manufacturers.forEach(m => { %>
+                        <li>
+                            <a
+                                href="/products?manufacturer=<%= encodeURIComponent(m.manufacturer) %>"
+                            >
+                                <%= m.manufacturer %>
+                                <span class="count">(<%= m.product_count %>)</span>
+                            </a>
+                        </li>
+                    <% }); %>
+                </ul>
+            </section>
+        <% } %>
     <% } %>
 </aside>

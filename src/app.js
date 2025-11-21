@@ -20,8 +20,12 @@ app.set('views', './src/views');
 
 // Routes
 const productsRoutes = require('./routes/products');
+const productRoutes = require('./routes/product');
+const healthRoutes = require('./routes/health');
 
+app.use('/', healthRoutes);
 app.use('/', productsRoutes);
+app.use('/', productRoutes);
 
 // Error handling
 app.use((req, res) => {
@@ -34,6 +38,29 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
+
+// Graceful shutdown
+const shutdown = () => {
+    console.log('\nReceived shutdown signal, closing HTTP server...');
+    server.close(() => {
+        console.log('HTTP server closed');
+        const db = require('./config/database');
+        db.end(() => {
+            console.log('Database pool closed');
+            process.exit(0);
+        });
+    });
+
+    // Force close after 10 seconds
+    setTimeout(() => {
+        console.error('Could not close connections in time, forcefully shutting down');
+        process.exit(1);
+    }, 10000);
+};
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);

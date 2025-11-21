@@ -311,6 +311,27 @@ psql -d dental_catalog -c "\d products"
 - **Testing**: Server running at http://localhost:3000, pagination verified
 - **Moved to**: `docs/issues/resolved/`
 
+### ✅ ISSUE-004: Search and Filtering Functionality
+- **Resolution Date**: 2024-11-20
+- **Outcome**: Full-text search and filtering fully functional
+- **Files**: Updated `src/models/product.js`, `src/routes/products.js`, templates, CSS
+- **Features**:
+  - German full-text search using PostgreSQL tsvector
+  - Search ranking by relevance (ts_rank)
+  - Manufacturer filter with product counts (294 manufacturers)
+  - Category filter contextual to manufacturer (236 categories)
+  - Sidebar navigation with active state highlighting
+  - Combined search + filter support
+  - Clear filters button
+  - Dynamic page titles based on filters
+- **Testing Results**:
+  - Search "Implantat": 386 products found
+  - Search "spiegel": 43 products found
+  - Manufacturer filter "Dentsply Sirona": working
+  - Combined "composite" + "Ivoclar Vivadent": 342 products
+  - Manufacturer + category filtering: working
+- **Moved to**: `docs/issues/resolved/`
+
 ---
 
 ## Lessons Learned
@@ -366,9 +387,12 @@ None currently. Ready to proceed with ISSUE-003.
 - ✅ Express app implemented
 - ✅ Product listing page working with real data
 - ✅ Pagination functional (612 pages)
+- ✅ German full-text search implemented
+- ✅ Manufacturer filtering (294 manufacturers)
+- ✅ Category filtering (236 categories)
+- ✅ Sidebar navigation with counts
 
 **Ready For:**
-- Search and filtering (ISSUE-004)
 - Product detail pages (ISSUE-005)
 - CSS polish (ISSUE-006)
 
@@ -377,5 +401,5 @@ None currently. Ready to proceed with ISSUE-003.
 
 ---
 
-**Last Updated**: 2024-11-20 (Express app working with 29,352 products)
-**Next Session**: Start ISSUE-004 (Search and Filtering)
+**Last Updated**: 2024-11-20 (Search and filtering complete)
+**Next Session**: Start ISSUE-005 (Product Detail Pages)

@@ -1,7 +1,8 @@
 # ISSUE-005: Product Detail Pages (PDP)
 
-**Status**: Pending
+**Status**: Resolved
 **Date**: 2024-11-20
+**Resolved**: 2024-11-20
 **Type**: Feature - Phase 5
 **Component**: Backend, Views
 **Assignee**: Claude Code

@@ -175,6 +175,19 @@ a:hover {
     font-size: 0.9rem;
 }
 
+.back-link {
+    display: inline-block;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    color: #0066cc;
+    font-size: 0.9rem;
+}
+
+.back-link:hover {
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
 /* Content */
 .content {
     background: #fff;
@@ -198,6 +211,19 @@ a:hover {
 
 .result-count {
     color: #666;
+}
+
+.clear-filters {
+    padding: 0.5rem 1rem;
+    background: #f0f0f0;
+    border-radius: 4px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.clear-filters:hover {
+    background: #e0e0e0;
+    text-decoration: none;
 }
 
 /* Product Grid */
@@ -300,6 +326,238 @@ a:hover {
 }
 
 .pagination-info {
+    color: #666;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.breadcrumb a {
+    color: #0066cc;
+}
+
+.breadcrumb span {
+    color: #999;
+}
+
+/* Product Detail */
+.product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.product-images {
+    position: sticky;
+    top: 1rem;
+    height: fit-content;
+}
+
+@media (max-width: 768px) {
+    .product-images {
+        position: static;
+    }
+}
+
+.product-images img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #f0f0f0;
+}
+
+.product-manufacturer {
+    font-size: 0.9rem;
+    color: #0066cc;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.product-info h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+@media (max-width: 768px) {
+    .product-info h1 {
+        font-size: 1.5rem;
+    }
+}
+
+.product-variant {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.product-meta {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f8f8f8;
+    border-radius: 4px;
+}
+
+.product-meta p {
+    margin-bottom: 0.5rem;
+}
+
+.product-meta p:last-child {
+    margin-bottom: 0;
+}
+
+.product-sku,
+.product-manufacturer-number {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.product-description {
+    margin: 2rem 0;
+    line-height: 1.8;
+    color: #333;
+}
+
+.product-description h3 {
+    font-size: 1.2rem;
+    margin: 1.5rem 0 0.75rem 0;
+}
+
+.product-description p {
+    margin-bottom: 1rem;
+}
+
+.product-description ul,
+.product-description ol {
+    margin: 1rem 0 1rem 1.5rem;
+}
+
+.product-description li {
+    margin-bottom: 0.5rem;
+}
+
+.product-description strong,
+.product-description b {
+    font-weight: 600;
+}
+
+.product-actions {
+    margin-top: 2rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+
+.btn:hover {
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #0066cc;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0052a3;
+}
+
+.btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+/* Error Page */
+.error-page {
+    max-width: 600px;
+    margin: 3rem auto;
+    text-align: center;
+    padding: 2rem;
+}
+
+.error-page h1 {
+    color: #cc0000;
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.error-detail {
+    background: #f8f8f8;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+}
+
+.error-detail code {
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .error-actions {
+        flex-direction: column;
+    }
+}
+
+.error-suggestions {
+    margin-top: 2rem;
+    text-align: left;
+    background: #f8f8f8;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.error-suggestions h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.error-suggestions ul {
+    list-style-position: inside;
+}
+
+.error-suggestions li {
+    margin-bottom: 0.5rem;
     color: #666;
 }
 

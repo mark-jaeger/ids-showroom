@@ -18,6 +18,9 @@
 
                 <div class="toolbar">
                     <p class="result-count"><%= pagination.totalCount.toLocaleString('de-DE') %> Produkte</p>
+                    <% if (filters.query || filters.manufacturer || filters.category) { %>
+                        <a href="/products" class="clear-filters">Filter zurücksetzen</a>
+                    <% } %>
                 </div>
 
                 <div class="product-grid">

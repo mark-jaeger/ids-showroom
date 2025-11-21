@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> | Dental Katalog</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <%- include('partials/header', { filters: {} }) %>
+
+    <div class="container">
+        <div class="layout">
+            <!-- Sidebar with categories for this manufacturer -->
+            <aside class="sidebar">
+                <section class="sidebar-section">
+                    <h2><%= product.manufacturer %></h2>
+                    <a href="/products" class="back-link">← Alle Hersteller</a>
+                </section>
+
+                <% if (categories && categories.length > 0) { %>
+                    <section class="sidebar-section">
+                        <h2>Kategorien</h2>
+                        <ul class="category-list">
+                            <% categories.forEach(c => { %>
+                                <li>
+                                    <a
+                                        href="/products?manufacturer=<%= encodeURIComponent(product.manufacturer) %>&category=<%= encodeURIComponent(c.category) %>"
+                                        class="<%= product.category === c.category ? 'active' : '' %>"
+                                    >
+                                        <%= c.category %>
+                                        <span class="count">(<%= c.product_count %>)</span>
+                                    </a>
+                                </li>
+                            <% }); %>
+                        </ul>
+                    </section>
+                <% } %>
+            </aside>
+
+            <main class="content">
+                <!-- Breadcrumb navigation -->
+                <nav class="breadcrumb">
+                    <a href="/">Home</a>
+                    <span>›</span>
+                    <a href="/products">Produkte</a>
+                    <span>›</span>
+                    <a href="/products?manufacturer=<%= encodeURIComponent(product.manufacturer) %>"><%= product.manufacturer %></a>
+                    <span>›</span>
+                    <span><%= product.name %></span>
+                </nav>
+
+                <!-- Product detail -->
+                <article class="product-detail">
+                    <div class="product-images">
+                        <% if (product.image_url) { %>
+                            <img src="<%= product.image_url %>" alt="<%= product.name %>" onerror="this.src='/images/placeholder.svg'">
+                        <% } else { %>
+                            <img src="/images/placeholder.svg" alt="Kein Bild">
+                        <% } %>
+                    </div>
+
+                    <div class="product-info">
+                        <p class="product-manufacturer"><%= product.manufacturer %></p>
+                        <h1><%= product.name %></h1>
+
+                        <% if (product.variant_name && product.variant_name !== 'nan') { %>
+                            <p class="product-variant"><%= product.variant_name %></p>
+                        <% } %>
+
+                        <div class="product-meta">
+                            <p class="product-sku">Artikelnummer: <strong><%= product.sku %></strong></p>
+                            <% if (product.manufacturer_number && product.manufacturer_number !== 'nan') { %>
+                                <p class="product-manufacturer-number">Herstellernummer: <strong><%= product.manufacturer_number %></strong></p>
+                            <% } %>
+                        </div>
+
+                        <% if (product.description) { %>
+                            <div class="product-description">
+                                <%- product.description %>
+                            </div>
+                        <% } %>
+
+                        <div class="product-actions">
+                            <a href="/products?manufacturer=<%= encodeURIComponent(product.manufacturer) %>" class="btn btn-primary">
+                                Weitere Produkte von <%= product.manufacturer %>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </main>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

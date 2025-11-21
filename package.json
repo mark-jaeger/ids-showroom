@@ -6,8 +6,10 @@
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
-    "init-db": "psql $DATABASE_URL -f scripts/schema.sql",
-    "import": "node scripts/import-csv.js"
+    "setup-db": "node scripts/setup-database.js",
+    "import-data": "node scripts/import-products.js",
+    "deploy": "sh scripts/deploy-railway.sh",
+    "test": "echo \"No tests configured yet\" && exit 0"
   },
   "keywords": ["dental", "catalog", "products", "search"],
   "author": "",
