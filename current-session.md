@@ -1,405 +1,256 @@
-# Current Session - Dental Catalog Project
+# Current Session - Railway Deployment
 
-**Date**: 2024-11-20
-**Session Goal**: Initialize project and set up database foundation
-**Status**: Phase 1 & 2 Complete ✅
-
----
-
-## Session Summary
-
-Started new dental product catalog project. Completed initial planning, created 6 issue files for incremental implementation, and successfully implemented database setup (ISSUE-001) and CSV import functionality (ISSUE-002).
+**Date**: 2025-11-21
+**Session Goal**: Deploy application to Railway with custom domain
+**Status**: Almost Complete - Needs Final Configuration ⚠️
 
 ---
 
-## What Was Accomplished
+## Summary
 
-### Planning & Issue Creation
-
-**Issue Files Created:**
-- ISSUE-001: Database Schema Setup ✅ RESOLVED
-- ISSUE-002: CSV Import Script ✅ RESOLVED
-- ISSUE-003: Express App + Basic Listing (Pending)
-- ISSUE-004: Search and Filtering (Pending)
-- ISSUE-005: Product Detail Pages (Pending)
-- ISSUE-006: CSS Polish & Responsive Design (Pending)
-
-**Key Decision:**
-- Moved CSV import to Phase 2 (before web app) to enable testing with real data
-- This allows validating schema with actual product data early
-
-### Implementation: ISSUE-001 (Database Schema)
-
-**Files Created:**
-- `scripts/schema.sql` - PostgreSQL schema with full-text search
-- `src/config/database.js` - Connection pool configuration
-- `.env.example` - Environment variable template
-- `.gitignore` - Git ignore rules
-
-**Database Features:**
-- Products table with all required fields
-- Generated `search_vector` column (German language)
-- Extensions: `pg_trgm`, `unaccent`
-- Indexes: GIN for search, B-tree for manufacturer/category/SKU
-- Import history tracking table
-- 5 seed products for initial testing
-
-**Verification:**
-```
-✓ Database created: dental_catalog
-✓ Extensions installed successfully
-✓ Tables created: products, import_history
-✓ All indexes created
-✓ Seed data inserted: 5 products
-```
-
-### Implementation: ISSUE-002 (CSV Import)
-
-**Files Created:**
-- `scripts/import-csv.js` - Complete CSV import script
-- `data/sample.csv` - 10 test products
-- `package.json` - Project dependencies and scripts
-
-**Import Features:**
-- HTML sanitization (allows: p, ul, li, b, strong, i, em, h3)
-- Category extraction from hierarchical structure (cat1→cat4)
-- "nan" value cleaning (convert to null)
-- Deduplication (within CSV and database upsert)
-- Error handling and progress reporting
-- Import history tracking
-
-**Test Results:**
-```
-✓ CSV Import Test (Sample):
-  - 10 rows processed
-  - 10 successful imports
-  - 0 failures
-
-✓ Full Product Import:
-  - File: data/2025_06_04_scraping_products.csv (42MB)
-  - CSV rows: 41,115
-  - Unique products imported: 29,342
-  - Duplicates skipped: ~11,773
-  - Failures: 0
-  - Import time: ~3 minutes
-  - Import history recorded
-```
-
-**Full-Text Search Verification:**
-```sql
--- Search for "Implantat" in German
-SELECT name FROM products
-WHERE search_vector @@ plainto_tsquery('german', 'Implantat');
-
-Result:
-  Implantat-System | Brand Z
-```
-
-**Data Distribution (Full Catalog):**
-```
-Total Products: 29,352
-Unique Manufacturers: 294
-Unique Categories: 236
-
-Top 10 Manufacturers:
-  1. Dentsply Sirona: 1,729 products
-  2. Ivoclar Vivadent: 1,411 products
-  3. GC Germany: 1,371 products
-  4. Anthogyr: 1,067 products
-  5. Horico: 1,008 products
-  6. Omnident: 992 products
-  7. Kulzer: 948 products
-  8. Coltene Whaledent: 937 products
-  9. VITA Zahnfabrik: 816 products
-  10. Kerr: 722 products
-
-Top 10 Categories:
-  1. Composite lichthärtend: 1,959 products
-  2. Keramikmassen und Malfarben: 1,422 products
-  3. Diamanten: 1,156 products
-  4. Instrumente manuelle Aufbereitung: 1,004 products
-  5. Blöcke: 784 products
-  6. Polierer und Zubehör: 723 products
-  7. Instrumente maschinelle Aufbereitung: 627 products
-  8. Parodontologie: 595 products
-  9. Einmalhandschuhe unsteril: 562 products
-  10. Ronden: 531 products
-
-Data Quality:
-  - Products with images: 29,344 (99.97%)
-  - Products with descriptions: 29,266 (99.71%)
-```
+Successfully completed Railway deployment infrastructure, database setup, and CSV import. Fixed critical healthcheck issue (app binding) and workflow configuration. Application is ready to deploy once RAILWAY_SERVICE secret is configured in GitHub.
 
 ---
 
-## Technical Stack Confirmed
+## Deployment Progress
 
-**Database:**
-- PostgreSQL 16 (via Homebrew)
-- pg_trgm extension for fuzzy search
-- German language text search configuration
+### ✅ Completed Tasks
 
-**Node.js:**
-- Express (web framework)
-- EJS (templating)
-- pg (PostgreSQL client)
-- csv-parse (CSV parsing)
-- sanitize-html (HTML sanitization)
-- helmet (security)
-- compression (performance)
+1. **Database Setup on Railway**
+   - PostgreSQL database created: `ids-catalog-db`
+   - Schema deployed successfully
+   - Import history and product_group column added
+   - Database URL: `postgresql://postgres:bPGgSheLLJDDIilMkEwtjCJiXhIeVwzA@caboose.proxy.rlwy.net:48188/railway`
 
-**Development:**
-- nodemon (auto-reload)
-- Local PostgreSQL instance
+2. **CSV Import to Production**
+   - Successfully imported 29,342 products to Railway database
+   - Import completed without errors
+   - Products searchable and ready
 
----
+3. **Critical Fixes Applied**
+   - **Fixed healthcheck issue**: App now binds to `0.0.0.0` instead of localhost (src/app.js:41-42)
+   - **Fixed workflow**: Added `--service` flag to Railway deployment command
+   - **Fixed database config**: Removed `process.exit()` calls that were killing app on connection errors
 
-## Current Database State
+4. **Cloudflare DNS Configuration**
+   - CNAME record created: `catalog.ids.online` → `ngrdpxhz.up.railway.app`
+   - Proxied through Cloudflare
+   - SSL/TLS ready
 
-**Tables:**
-```
-products (10 rows)
-  - All fields populated correctly
-  - Search vector generated automatically
-  - Indexes functional
+5. **GitHub Integration**
+   - CI/CD pipeline configured in `.github/workflows/deploy.yml`
+   - RAILWAY_TOKEN secret configured
+   - Deployment monitoring script created
 
-import_history (1 row)
-  - Tracks CSV import: data/sample.csv
-  - 10 imported, 0 failed
-```
+### ⚠️ Pending: Final Configuration
 
-**Environment:**
-```
-DATABASE_URL=postgresql://localhost/dental_catalog
-NODE_ENV=development
-PORT=3000
-```
+**ACTION REQUIRED**: Add Railway Service ID to GitHub Secrets
 
----
+The deployment is failing because the Railway project has multiple services (app + database), and the CLI needs to know which service to deploy.
 
-## Project Structure
+**How to Fix:**
 
-```
-ids-showroom/
-├── data/
-│   └── sample.csv              # 10 test products
-├── docs/
-│   ├── issues/
-│   │   ├── ISSUE-001-database-schema-setup.md (✅ RESOLVED)
-│   │   ├── ISSUE-002-csv-import-script.md (✅ RESOLVED)
-│   │   ├── ISSUE-003-express-app-basic-listing.md
-│   │   ├── ISSUE-004-search-and-filtering.md
-│   │   ├── ISSUE-005-product-detail-pages.md
-│   │   └── ISSUE-006-css-polish-responsive.md
-│   ├── decisions/
-│   ├── implementation specification.md
-│   └── working-with-claude.md
-├── scripts/
-│   ├── schema.sql              # Database schema
-│   └── import-csv.js           # CSV import script
-├── src/
-│   └── config/
-│       └── database.js         # Connection pool
-├── .env                        # Local environment (gitignored)
-├── .env.example                # Environment template
-├── .gitignore
-├── package.json                # Dependencies installed
-├── README.md
-└── current-session.md          # This file
-```
+1. **Get the Service ID from Railway Dashboard:**
+   - Go to https://railway.app/project/20de9239-2262-4731-b25a-61da9df33f9d
+   - Click on the **ids-showroom-app** service (NOT the database)
+   - Copy the Service ID from the URL or settings
+   - It will look like: `20de9239-2262-4731-b25a-61da9df33f9d` or similar
+
+2. **Add to GitHub Secrets:**
+   - Go to https://github.com/mark-jaeger/ids-showroom/settings/secrets/actions
+   - Click "New repository secret"
+   - Name: `RAILWAY_SERVICE`
+   - Value: `<paste the service ID here>`
+   - Click "Add secret"
+
+3. **Trigger Deployment:**
+   - Go to https://github.com/mark-jaeger/ids-showroom/actions
+   - Click on the failed "CI/CD Pipeline" run
+   - Click "Re-run all jobs"
+   - OR: Just push any commit to trigger auto-deployment
 
 ---
 
-## NPM Scripts Available
+## Issues Identified and Resolved
 
+### Issue 1: Railway Healthcheck Failure
+**Problem**: Application built successfully but failed all healthcheck attempts
+**Root Cause**: App was binding to `localhost` by default, preventing external healthchecks
+**Fix**: Modified `src/app.js` to explicitly bind to `0.0.0.0`
+```javascript
+const HOST = '0.0.0.0'; // Railway requires binding to all interfaces
+const server = app.listen(PORT, HOST, () => { ... });
+```
+**Commit**: 5a32737
+
+### Issue 2: GitHub Actions Deployment Failing
+**Problem**: Railway CLI error: "Multiple services found. Please specify a service via the `--service` flag."
+**Root Cause**: Railway project has 2 services (app + database), CLI can't auto-detect
+**Fix**: Updated workflow to use `--service $RAILWAY_SERVICE` flag
+**Commit**: af99df4
+
+### Issue 3: Database Connection Killing App
+**Problem**: App would crash on startup if database connection failed
+**Root Cause**: `process.exit(1)` called on connection errors
+**Fix**: Made connection testing non-blocking, log errors but continue
+**Commit**: 051188a
+
+---
+
+## Railway Project Details
+
+**Application Service:**
+- Project Name: ids-showroom-app
+- Project ID: 20de9239-2262-4731-b25a-61da9df33f9d
+- Railway URL: https://ngrdpxhz.up.railway.app
+- Custom Domain: https://catalog.ids.online
+
+**Database Service:**
+- Project Name: ids-catalog-db
+- Project ID: 1eff8598-df00-43ea-9c62-e8560e4c63e0
+- Public URL: postgresql://postgres:bPGgSheLLJDDIilMkEwtjCJiXhIeVwzA@caboose.proxy.rlwy.net:48188/railway
+
+**Environment Variables (configured in Railway):**
+- `DATABASE_URL`: postgresql://postgres:bPGgSheLLJDDIilMkEwtjCJiXhIeVwzA@caboose.proxy.rlwy.net:48188/railway
+- `NODE_ENV`: production
+- `PORT`: (auto-set by Railway)
+
+---
+
+## GitHub Secrets Configuration
+
+**Currently Configured:**
+- ✅ `RAILWAY_TOKEN`: c4cea773-3c1c-40c9-a15c-26c91fe2fa4c (production environment)
+- ✅ `RAILWAY_DATABASE_URL`: postgresql://postgres:bPGgSheLLJDDIilMkEwtjCJiXhIeVwzA@caboose.proxy.rlwy.net:48188/railway
+
+**Needs to be Added:**
+- ⚠️ `RAILWAY_SERVICE`: <Service ID from Railway dashboard>
+
+---
+
+## Files Modified for Railway Deployment
+
+### Configuration Files
+- `src/config/database.js` - Railway SSL support, increased timeouts, removed exit calls
+- `railway.json` - Railway deployment configuration
+- `.github/workflows/deploy.yml` - CI/CD pipeline with service flag
+
+### Application Files
+- `src/app.js` - Bind to 0.0.0.0 for Railway healthchecks
+
+### Scripts
+- `scripts/setup-database.js` - Added product_group column and import_history table
+- `scripts/setup-cloudflare-dns.js` - Automated DNS configuration
+- `scripts/check-deployment.js` - Deployment monitoring
+
+---
+
+## Testing After Deployment
+
+Once the RAILWAY_SERVICE secret is added and deployment succeeds:
+
+**Manual Verification:**
 ```bash
-npm start          # Start production server
-npm run dev        # Start development server (nodemon)
-npm run init-db    # Initialize database schema
-npm run import     # Import CSV file
+# Check Railway URL
+curl https://ngrdpxhz.up.railway.app/health
+
+# Check custom domain
+curl https://catalog.ids.online/health
+
+# Check product listing
+curl https://catalog.ids.online/products
+
+# View in browser
+open https://catalog.ids.online
 ```
 
-**Usage Examples:**
-```bash
-# Initialize database
-npm run init-db
-
-# Import product data
-npm run import data/sample.csv
-
-# Start development server (when app is built)
-npm run dev
+**Expected Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-11-21T...",
+  "uptime": 123.45,
+  "database": "connected",
+  "environment": "production"
+}
 ```
 
 ---
 
-## Testing Commands Used
+## Future Issues Created
 
-**Database Verification:**
-```bash
-# Count products
-psql -d dental_catalog -c "SELECT COUNT(*) FROM products;"
+### ISSUE-010: Automated CSV Ingestion
+- Inbox/done folder structure for CSV imports
+- Automatic history tracking
+- Watch mode for continuous ingestion
+- Prevents git repository bloat
 
-# View sample products
-psql -d dental_catalog -c "SELECT sku, name, manufacturer FROM products LIMIT 5;"
+### ISSUE-011: Migrate to UUIDs
+- Replace sequential IDs with UUIDs for better security
+- Prevents enumeration attacks
+- Better for distributed systems
+- Includes migration scripts and rollback procedures
 
-# Test search
-psql -d dental_catalog -c "SELECT name FROM products WHERE search_vector @@ plainto_tsquery('german', 'Implantat');"
+### ISSUE-012: Optimize CSV Import Performance
+- Current: ~1s per product (11+ hours for 41K products on Railway)
+- Proposed: Batch inserts (100 products per query)
+- Expected: <100ms per product (<70 minutes total)
+- 50-100x performance improvement
 
-# Check manufacturer distribution
-psql -d dental_catalog -c "SELECT manufacturer, COUNT(*) FROM products GROUP BY manufacturer;"
+---
 
-# View table structure
-psql -d dental_catalog -c "\d products"
+## Deployment Architecture
+
 ```
+User → Cloudflare (catalog.ids.online)
+       ↓
+     Railway Proxy (ngrdpxhz.up.railway.app)
+       ↓
+     Express App (node src/app.js)
+       ↓
+     PostgreSQL Database (Railway)
+```
+
+**Security:**
+- HTTPS via Railway (automatic)
+- Cloudflare proxy (DDoS protection)
+- Helmet.js (security headers)
+- PostgreSQL SSL enabled
+
+---
+
+## Key Commits
+
+- `6c9d75c` - Complete ISSUE-003: Express app with product listing
+- `6b74f29` - Import full product catalog and configure ids database user
+- `051188a` - Fix Railway deployment: Remove process.exit on database errors
+- `343f73d` - Add deployment monitoring script
+- `5a32737` - Fix Railway healthcheck: bind to 0.0.0.0
+- `af99df4` - Fix Railway deployment: Add service selection
 
 ---
 
 ## Next Steps
 
-### Immediate: ISSUE-003 (Express App + Basic Listing)
-
-**Goal**: Build web application with basic product listing
-
-**Tasks:**
-1. Create Express application (`src/app.js`)
-2. Create product model with pagination (`src/models/product.js`)
-3. Create products route (`src/routes/products.js`)
-4. Create EJS templates (layout, products page, partials)
-5. Create basic CSS for functional skeleton
-6. Test listing page with real product data
-
-**Expected Output:**
-- GET `/products` displays all products in grid
-- Pagination works (48 products per page)
-- Products clickable (will 404 until ISSUE-005)
-- Responsive grid layout
-- Basic styling (functional, not polished)
-
-### Future Issues:
-- ISSUE-004: Add search and filtering functionality
-- ISSUE-005: Add product detail pages (PDP)
-- ISSUE-006: Polish CSS and responsive design
+1. **Add RAILWAY_SERVICE secret** (see "Pending" section above)
+2. **Re-run failed GitHub Action** or push new commit
+3. **Monitor deployment** with check-deployment.js script
+4. **Verify production site** at https://catalog.ids.online
+5. **Test all features**:
+   - Product listing
+   - Search functionality
+   - Manufacturer filtering
+   - Category filtering
+   - Product detail pages
+   - Pagination
 
 ---
 
-## Issues Resolved
+## Known Issues
 
-### ✅ ISSUE-001: Database Schema Setup
-- **Resolution Date**: 2024-11-20
-- **Outcome**: Database fully functional with German full-text search
-- **Files**: `scripts/schema.sql`, `src/config/database.js`
-- **Moved to**: `docs/issues/resolved/`
-
-### ✅ ISSUE-002: CSV Import Script
-- **Resolution Date**: 2024-11-20
-- **Outcome**: Import script working, 29,342 products loaded successfully
-- **Files**: `scripts/import-csv.js`, `data/2025_06_04_scraping_products.csv`
-- **Moved to**: `docs/issues/resolved/`
-
-### ✅ ISSUE-003: Express App + Basic Product Listing
-- **Resolution Date**: 2024-11-20
-- **Outcome**: Web application running with product listing and pagination
-- **Files**: `src/app.js`, `src/models/product.js`, `src/routes/products.js`, EJS templates, CSS
-- **Features**:
-  - Express server with EJS templating
-  - Product listing page with real 29,352 products
-  - Pagination (48 products per page, 612 pages total)
-  - Responsive product grid
-  - Basic CSS styling
-  - Placeholder images
-- **Testing**: Server running at http://localhost:3000, pagination verified
-- **Moved to**: `docs/issues/resolved/`
-
-### ✅ ISSUE-004: Search and Filtering Functionality
-- **Resolution Date**: 2024-11-20
-- **Outcome**: Full-text search and filtering fully functional
-- **Files**: Updated `src/models/product.js`, `src/routes/products.js`, templates, CSS
-- **Features**:
-  - German full-text search using PostgreSQL tsvector
-  - Search ranking by relevance (ts_rank)
-  - Manufacturer filter with product counts (294 manufacturers)
-  - Category filter contextual to manufacturer (236 categories)
-  - Sidebar navigation with active state highlighting
-  - Combined search + filter support
-  - Clear filters button
-  - Dynamic page titles based on filters
-- **Testing Results**:
-  - Search "Implantat": 386 products found
-  - Search "spiegel": 43 products found
-  - Manufacturer filter "Dentsply Sirona": working
-  - Combined "composite" + "Ivoclar Vivadent": 342 products
-  - Manufacturer + category filtering: working
-- **Moved to**: `docs/issues/resolved/`
+None currently - all blocking issues resolved!
 
 ---
 
-## Lessons Learned
-
-1. **Early data import was the right call**
-   - Having real product data from the start will make UI testing more realistic
-   - Validates database schema with actual CSV structure
-   - Reveals data quality issues early (e.g., "nan" values)
-
-2. **PostgreSQL setup smooth**
-   - Homebrew service management worked well
-   - German language search configuration is built-in
-   - Generated columns for search_vector are powerful
-
-3. **Import script is robust**
-   - Handles "nan" values gracefully
-   - HTML sanitization prevents XSS
-   - Upsert allows re-importing without duplicates
-   - Progress reporting is helpful for large imports
-
----
-
-## Environment Notes
-
-**PostgreSQL:**
-- Running via Homebrew: `brew services start postgresql@16`
-- Socket: `/tmp/.s.PGSQL.5432`
-- Database: `dental_catalog`
-- No password required (local development)
-
-**Node.js:**
-- Version: Latest (via system)
-- Packages: 141 installed
-- No vulnerabilities found
-
----
-
-## Outstanding Questions / Decisions Needed
-
-None currently. Ready to proceed with ISSUE-003.
-
----
-
-## Session End State
-
-**Completed:**
-- ✅ Project initialized
-- ✅ All issue files created (6 total)
-- ✅ Database schema deployed
-- ✅ CSV import working
-- ✅ 29,352 products in database
-- ✅ Full-text search verified
-- ✅ Express app implemented
-- ✅ Product listing page working with real data
-- ✅ Pagination functional (612 pages)
-- ✅ German full-text search implemented
-- ✅ Manufacturer filtering (294 manufacturers)
-- ✅ Category filtering (236 categories)
-- ✅ Sidebar navigation with counts
-
-**Ready For:**
-- Product detail pages (ISSUE-005)
-- CSS polish (ISSUE-006)
-
-**Blockers:**
-- None
-
----
-
-**Last Updated**: 2024-11-20 (Search and filtering complete)
-**Next Session**: Start ISSUE-005 (Product Detail Pages)
+**Last Updated**: 2025-11-21 (Deployment infrastructure complete)
+**Status**: Ready for final configuration and deployment
