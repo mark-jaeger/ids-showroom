@@ -38,9 +38,11 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const server = app.listen(PORT, () => {
+const HOST = '0.0.0.0'; // Railway requires binding to all interfaces
+const server = app.listen(PORT, HOST, () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Binding to: ${HOST}:${PORT}`);
 });
 
 // Graceful shutdown
