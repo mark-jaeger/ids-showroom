@@ -209,3 +209,87 @@ Next Steps:
 3. Decide whether to proceed with full extraction
 ============================================================
 ```
+
+---
+
+## Railway Deployment Experience (2025-11-21)
+
+### What Worked Well
+
+**Systematic Problem Solving**
+- Claude methodically identified and resolved 5 critical deployment issues
+- Each fix was tested and verified before moving to the next
+- Clear communication of what was being done and why
+
+**Configuration Management**
+- Created multiple utility scripts for DNS and deployment management
+- Automated Cloudflare DNS updates via API
+- Built deployment monitoring script for verification
+
+**Documentation as We Go**
+- Documented each issue and resolution in real-time
+- Created comprehensive session notes with full timeline
+- Wrote ADR-003 for deployment architecture decision
+
+### Challenges Encountered
+
+**Environment Variables**
+- DATABASE_URL not set in Railway initially
+- Required manual configuration in Railway dashboard
+- Lesson: Always verify environment variables in target platform
+
+**Multi-Service Complexity**
+- Railway project with separate app/database services
+- Required RAILWAY_SERVICE specification in GitHub Actions
+- Lesson: Document service IDs immediately after creation
+
+**DNS Configuration**
+- Multiple Railway URLs during debugging caused confusion
+- Cloudflare bot protection interfered with testing
+- Lesson: Test with direct Railway URL before configuring custom domain
+
+### Process Improvements
+
+1. **Always bind to 0.0.0.0** for containerized deployments
+2. **Non-blocking database connections** prevent startup failures
+3. **Service IDs must be documented** for multi-service projects
+4. **Test incrementally** - verify each layer before adding complexity
+5. **DNS changes take time** - allow 5-30 minutes for propagation
+
+### Deployment Artifacts Created
+
+**Scripts** (7 new files):
+- `scripts/setup-cloudflare-dns.js`
+- `scripts/update-cloudflare-dns.js`
+- `scripts/disable-cloudflare-proxy.js`
+- `scripts/fix-cloudflare-security.js`
+- `scripts/set-correct-cname.js`
+- `scripts/check-deployment.js`
+- `scripts/get-railway-services.js`
+
+**Documentation**:
+- Comprehensive session notes (current-session.md)
+- ADR-003 for deployment architecture
+- ISSUE-009 resolved with full resolution summary
+
+### Key Takeaways
+
+**For Future Deployments:**
+- Create deployment checklist before starting
+- Document environment variables as they're configured
+- Keep service IDs and URLs in project documentation
+- Test health checks locally before deploying
+- Use deployment scripts for repeatable processes
+
+**For Working with Claude:**
+- Provide deployment logs when issues occur
+- Specify exact error messages and context
+- Share Railway dashboard information proactively
+- Confirm each fix before proceeding to next issue
+- Request documentation updates at natural breakpoints
+
+---
+
+**Total Deployment Time**: ~4 hours (including debugging and documentation)
+**Issues Resolved**: 5 critical configuration issues
+**Result**: Production application live at https://catalog.ids.online
