@@ -102,23 +102,30 @@ jobs:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
+      - name: Link to Railway project
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          echo "🔗 Linking to Railway project..."
+          railway link 20de9239-2262-4731-b25a-61da9df33f9d
+
       - name: Setup database schema
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           echo "📊 Creating database schema..."
-          railway run node scripts/setup-database.js
+          railway run --service ids-showroom-app node scripts/setup-database.js
 
       - name: Import CSV data
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           echo "📥 Importing product data..."
-          railway run npm run import-data
+          railway run --service ids-showroom-app npm run import-data
 
       - name: Verify import
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
           echo "✓ Verifying data..."
-          railway run node -e "require('./src/config/database').query('SELECT COUNT(*) FROM products').then(r => { console.log('Products:', r.rows[0].count); process.exit(0); }).catch(e => { console.error(e); process.exit(1); })"
+          railway run --service ids-showroom-app node -e "require('./src/config/database').query('SELECT COUNT(*) FROM products').then(r => { console.log('Products:', r.rows[0].count); process.exit(0); }).catch(e => { console.error(e); process.exit(1); })"
