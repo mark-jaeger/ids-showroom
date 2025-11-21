@@ -11,7 +11,7 @@ railway run node scripts/setup-database.js
 
 # Step 2: Import CSV data
 echo "📥 Importing product data from CSV..."
-railway run node scripts/import-products.js
+railway run npm run import-data
 
 # Step 3: Verify import
 echo "✓ Verifying data import..."

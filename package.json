@@ -7,7 +7,7 @@
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "setup-db": "node scripts/setup-database.js",
-    "import-data": "node scripts/import-products.js",
+    "import-data": "node scripts/import-csv.js data/2025_06_04_scraping_products.csv",
     "deploy": "sh scripts/deploy-railway.sh",
     "test": "echo \"No tests configured yet\" && exit 0"
   },
